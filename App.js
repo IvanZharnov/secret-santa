@@ -18,7 +18,39 @@ export default class App extends React.Component {
 
   state = {
      fontLoaded: false,
+     givers: [
+       { id: 0, value: 'Полина' },
+       { id: 1, value: 'Ваня' },
+       { id: 2, value: 'Димас' },
+       { id: 3, value: 'Некит' },
+       { id: 4, value: 'Галя' },
+       { id: 5, value: 'Денис' }
+     ],
+     recipients: [
+       { id: 0, value: 'Полина' },
+       { id: 1, value: 'Ваня' },
+       { id: 2, value: 'Димас' },
+       { id: 3, value: 'Некит' },
+       { id: 4, value: 'Галя' },
+       { id: 5, value: 'Денис' }
+     ],
+     selectedGiver: {},
+     selectedRecipient: ''
    };
+
+   selectRecipient = (selectedGiver) => {
+     const { givers, recipients }
+     // selectedGiver = {id: NUMBER, value: STRING};
+     let RandomRecipientIndex;
+     const newGivers = givers.filter(item => item.id !== selectedGiver.id);
+     const newRecipients = recipients.filter(item => item.id !== selectedGiver.id);
+     if ( newGivers.length < 3 ) {
+
+     } else {
+       RandomRecipientIndex = Math.floor(Math.random() * newRecipients.length);
+
+     }
+   }
 
   async componentWillMount() {
     await Font.loadAsync({
@@ -33,23 +65,10 @@ export default class App extends React.Component {
 
 
   render() {
-    const data = [{
-      value: 'Полина',
-    }, {
-      value: 'Ваня',
-    }, {
-      value: 'Димас',
-    }, {
-      value: 'Некит',
-    }, {
-      value: 'Галя',
-    }, {
-      value: 'Денис',
-    }];
-
     if (!this.state.fontLoaded) {
       return <Expo.AppLoading />;
     }
+
     return (
       <View>
         <Background source={require('./bckgrnd.jpg')}>
@@ -60,7 +79,7 @@ export default class App extends React.Component {
             <DropdownWrapper>
               <Dropdown
                 label = 'Choose Santa'
-                data = {data}
+                data = {this.state.givers}
                 baseColor = '#d70000'
                 dropdownOffset = {{ top: 20, left: 0 }}
                 rippleInsets = {{ top: 0, bottom: -20 }}
