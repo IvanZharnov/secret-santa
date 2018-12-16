@@ -5,14 +5,20 @@ import {
   View,
   ImageBackground,
   Picker,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
+import Emoji from 'react-native-emoji';
 import {
   Background,
   Wrapper,
   DropdownWrapper,
-  Title
+  Title,
+  ChooseButton,
+  ButtonText,
+  RecipientText,
+  TextWrapper
 } from './App.styles';
 
 export default class App extends React.Component {
@@ -43,7 +49,7 @@ export default class App extends React.Component {
      const { givers, recipients, selectedGiver } = this.state;
      const newGivers = givers.filter(item => item.id !== selectedGiver.id);
      let randomIndex = Math.floor(Math.random() * recipients.length);
-     if ( newGivers.length < 3 ) {
+     if ( newGivers.length < 2 ) {
        while (
          recipients[randomIndex].id === selectedGiver.id &&
          recipients[randomIndex].id === newGivers[0].id
@@ -66,6 +72,13 @@ export default class App extends React.Component {
 
    SelectGiver = (e, index, data) => {
      this.setState({ selectedGiver: data[index] });
+   }
+
+   onSubmit = () => {
+     this.setState({
+       selectedGiver: '',
+       selectedRecipient: ''
+     });
    }
 
   async componentWillMount() {
@@ -96,22 +109,42 @@ export default class App extends React.Component {
               <Dropdown
                 label = 'Choose Santa'
                 data = {this.state.givers}
-                baseColor = '#d70000'
+                baseColor = '#fff'
                 dropdownOffset = {{ top: 20, left: 0 }}
                 rippleInsets = {{ top: 0, bottom: -20 }}
                 itemColor = '#880000'
                 selectedItemColor = '#d70000'
-                textColor = '#d70000'
-                pickerStyle = {{borderRadius: 20, backgroundColor: '#d3fece'}}
+                textColor = '#fff'
+                pickerStyle = {{borderRadius: 20, backgroundColor: '#fff'}}
                 itemCount = {6}
-                fontSize = {15}
+                fontSize = {16}
                 onChangeText = {this.SelectGiver}
+                disabled = {!!this.state.selectedRecipient}
               />
             </DropdownWrapper>
+            {!!this.state.selectedRecipient ?
+              <TextWrapper>
+                <Image
+                  source={require('./ball.png')}
+                  style={{
+                    width: 300, height: 300, position: 'absolute'
+                  }} />
+                <RecipientText>
+                  {`    ${this.state.selectedRecipient} `}
+                  <Emoji name="tada" style={{fontSize: 25}} />
+                </RecipientText>
+              </TextWrapper> :
+              <TextWrapper />
+            }
           </Wrapper>
-          <TouchableOpacity onPress={this.selectRecipient}>
-            <Text>Choose</Text>
-          </TouchableOpacity>
+          <ChooseButton
+            onPress={!!this.state.selectedRecipient ? this.onSubmit : this.selectRecipient}
+            disabled={!this.state.selectedGiver.value}
+          >
+            <ButtonText>
+            {!!this.state.selectedRecipient ? `OK!` : `Choose!`}
+            </ButtonText>
+          </ChooseButton>
         </Background>
       </View>
     );
